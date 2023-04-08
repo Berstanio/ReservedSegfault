@@ -1,6 +1,13 @@
+buildscript {
+    dependencies {
+        classpath "com.badlogicgames.gdx:gdx-jnigen-gradle:2.3.1"
+    }
+}
+
 plugins {
     id 'java'
 }
+apply plugin: "com.badlogicgames.gdx.gdx-jnigen"
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
@@ -9,10 +16,41 @@ repositories {
     mavenCentral()
 }
 
+jnigen {
+    // Your shared library name
+    sharedLibName = "segfault"
+
+    add(MacOsX, x64, ARM)
+    add(MacOsX, x64)
+    add(Linux, x64)
+}
+
+
 dependencies {
+    implementation fileTree("build/libs/")
+    implementation "com.badlogicgames.gdx:gdx-jnigen-loader:2.3.1"
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
+
+jar {
+    manifest {
+        attributes "Main-Class": "org.example.Main"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect {
+            if(!it.name.contains("native") && it.name.contains("ReservedSegfault")) return null
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+task runTask(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    mainClass = "org.example.Main"
+}
+
 
 test {
     useJUnitPlatform()

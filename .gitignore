@@ -15,6 +15,12 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+.idea
+
+jni
+libs
+ReservedSegfault-1.0-SNAPSHOT
+ReservedSegfault-1.0-SNAPSHOT.build_artifacts.txt
 
 ### Eclipse ###
 .apt_generated
